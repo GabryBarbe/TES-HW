@@ -54,17 +54,17 @@ def main():
 
     rate, data = sp.io.wavfile.read("halleluja.wav")
     
-    # sd.play(data, rate)  # riproduce il file audio
-    # sd.wait() # attende la fine esecuzione del file audio
+    sd.play(data, rate)  # riproduce il file audio
+    sd.wait() # attende la fine esecuzione del file audio
     
     sezioni = divisione_audio(rate, data, 15)
 
     # riproduzione dei segmenti di M secondi
-    # for i in range(len(segmenti)):
-    #     sd.play(segmenti[i], rate)
-    #     sd.wait()   
+    for i in range(len(sezioni)):
+        sd.play(sezioni[i], rate)
+        sd.wait()   
 
-    #plot_waveform(rate, data)
+    plot_waveform(rate, data)
 
     calcolo_fft_libreria(rate, sezioni)
 

@@ -1,7 +1,8 @@
+import scipy as sp
+import numpy as np
+
 def main():
-    print("Ciao")
+
     return 0
-
-
 
 main()

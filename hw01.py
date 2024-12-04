@@ -26,7 +26,7 @@ def divisione_audio(rate, data, M):
     Divisione del segnale audio in sezioni di M secondi
 
     Args:
-        rate: frequenza di campionamento del segnale audio
+        rate: frequenza di campionamento del segnale audio 
         data: contenuto del segnale audio
         M (integer): durata in secondi di ogni sezione
 
@@ -34,13 +34,13 @@ def divisione_audio(rate, data, M):
         sezioni (list): lista di sezioni di M secondi
     """
     campioni_per_sezione = rate*M # numero di campioni per sezione
-    num_sezioni = (len(data)//campioni_per_sezione) + 1# numero di sezioni
+    num_sezioni = (data.shape[0]//campioni_per_sezione) + 1# numero di sezioni
     
     sezioni = []
     for i in range(num_sezioni):
         inizio = i * campioni_per_sezione # inizio della sezione
         fine = (i+1) * campioni_per_sezione # fine della sezione
-        sezioni.append(data[inizio:fine]) # aggiungo la szione 
+        sezioni.append(data[inizio:fine]) # aggiungo la sezione 
 
     return sezioni
 
@@ -54,9 +54,8 @@ def plot_fft(freq, ampiezza, num_segmento):
         num_segmento (integer): numero del segmento
     """
     # seleziono solo le frequenze e ampiezze positive
-    freq_pos = freq[freq > 0]
-    ampiezza_pos = ampiezza[freq > 0]
-
+    freq_pos = [0.5 + f for f in freq]
+    ampiezza_pos = np.concatenate((ampiezza[len(ampiezza)//2 : ],ampiezza[0 : len(ampiezza)//2]))
     plt.plot(freq_pos, ampiezza_pos)
     plt.xlabel("Frequenza")
     plt.ylabel("Ampiezza")
@@ -74,7 +73,7 @@ def calcolo_fft_libreria(rate, segmenti):
     """
     for i,segmento in enumerate(segmenti):
         fft_segmento = sp.fft.fft(segmento) #calcolo fft del segmento
-        freq_segmento = sp.fft.fftfreq(len(segmento), d=1/rate) #calcolo frequenze
+        freq_segmento = sp.fft.fftfreq(len(segmento)) #calcolo frequenze 
         ampiezza_segmento = np.abs(fft_segmento) #calcolo ampiezze
         plot_fft(freq_segmento, ampiezza_segmento, i+1)
         
@@ -84,7 +83,6 @@ def main():
     # data è una matrice di 2 colonne (perchè il file è stereo) e tante 
     # righe quante sono i campioni
     # data.shape() restituisce il numero di righe e colonne della matrice
-
     rate, data = sp.io.wavfile.read("halleluja.wav")
     
     # sd.play(data, rate)  # riproduce il file audio
@@ -102,7 +100,5 @@ def main():
     calcolo_fft_libreria(rate, sezioni)
 
     return 0
-
-
 
 main()

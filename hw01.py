@@ -40,7 +40,7 @@ def divisione_audio(rate, data, M):
     for i in range(num_sezioni):
         inizio = i * campioni_per_sezione # inizio della sezione
         fine = (i+1) * campioni_per_sezione # fine della sezione
-        sezioni.append(data[inizio:fine]) # aggiungo la szione 
+        sezioni.append(data[inizio:fine]) # aggiungo la sezione 
 
     return sezioni
 
@@ -54,8 +54,8 @@ def plot_fft(freq, ampiezza, num_segmento):
         num_segmento (integer): numero del segmento
     """
     # seleziono solo le frequenze e ampiezze positive
-    freq_pos = freq[freq > 0]
-    ampiezza_pos = ampiezza[freq > 0]
+    freq_pos = [0.5 + f for f in freq]
+    ampiezza_pos = np.concatenate((ampiezza[len(ampiezza)//2 : ],ampiezza[0 : len(ampiezza)//2]))
     plt.plot(freq_pos, ampiezza_pos)
     plt.xlabel("Frequenza")
     plt.ylabel("Ampiezza")
@@ -73,7 +73,7 @@ def calcolo_fft_libreria(rate, segmenti):
     """
     for i,segmento in enumerate(segmenti):
         fft_segmento = sp.fft.fft(segmento) #calcolo fft del segmento
-        freq_segmento = sp.fft.fftfreq(len(segmento), d=1/rate) #calcolo frequenze
+        freq_segmento = sp.fft.fftfreq(len(segmento)) #calcolo frequenze 
         ampiezza_segmento = np.abs(fft_segmento) #calcolo ampiezze
         plot_fft(freq_segmento, ampiezza_segmento, i+1)
         

@@ -83,7 +83,6 @@ def main():
     # data è una matrice di 2 colonne (perchè il file è stereo) e tante 
     # righe quante sono i campioni
     # data.shape() restituisce il numero di righe e colonne della matrice
-
     rate, data = sp.io.wavfile.read("halleluja.wav")
     
     # sd.play(data, rate)  # riproduce il file audio

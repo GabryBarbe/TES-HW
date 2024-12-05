@@ -74,7 +74,7 @@ def calcolo_fft_libreria(segmenti, rate):
         fft_segmento = fft.fft(segmento) #calcolo fft del segmento
         freq_segmento = fft.fftfreq(len(segmento), d=1/rate)  #calcolo frequenze 
         ampiezza_segmento = np.abs(fft_segmento) / len(segmento) #calcolo ampiezze
-        plot_fft(freq_segmento, ampiezza_segmento, i+1)
+        plot_fft(freq_segmento / 1000, ampiezza_segmento, i+1)
         
 def calcolo_dft_manuale(segmenti):
     """
@@ -113,7 +113,7 @@ def main():
 
     #plot_waveform(rate, data)
 
-    calcolo_dft_manuale(sezioni)
+    calcolo_fft_libreria(sezioni, rate)
 
     return 0
 

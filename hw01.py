@@ -88,7 +88,7 @@ def main():
     # sd.play(data, rate)  # riproduce il file audio
     # sd.wait() # attende la fine esecuzione del file audio
     
-    sezioni = divisione_audio(rate, data, 15)
+    sezioni = divisione_audio(rate, data, 30)
 
     # riproduzione dei segmenti di M secondi
     # for i in range(len(sezioni)):

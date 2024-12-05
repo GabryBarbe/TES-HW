@@ -1,4 +1,5 @@
-import scipy as sp
+import scipy.fft as fft
+import scipy.io.wavfile as wav
 import sounddevice as sd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -53,9 +54,9 @@ def plot_fft(freq, ampiezza, num_segmento):
         num_segmento (integer): numero del segmento
     """
     # seleziono solo le frequenze e ampiezze positive
-    freq_pos = [0.5 + f for f in freq]
-    ampiezza_pos = np.concatenate((ampiezza[len(ampiezza)//2 : ],ampiezza[0 : len(ampiezza)//2]))
-    plt.plot(freq_pos, ampiezza_pos)
+    # freq_pos = [0.5 + f for f in freq]
+    # ampiezza_pos = np.concatenate((ampiezza[len(ampiezza)//2 : ],ampiezza[0 : len(ampiezza)//2]))
+    plt.plot(freq, ampiezza)
     plt.xlabel("Frequenza")
     plt.ylabel("Ampiezza")
     plt.suptitle("Segmento " + str(num_segmento))
@@ -70,9 +71,9 @@ def calcolo_fft_libreria(segmenti):
         segmenti (list): lista di sezioni di M secondi
     """
     for i,segmento in enumerate(segmenti):
-        fft_segmento = sp.fft.fft(segmento) #calcolo fft del segmento
-        freq_segmento = sp.fft.fftfreq(len(segmento)) #calcolo frequenze 
-        ampiezza_segmento = np.abs(fft_segmento) #calcolo ampiezze
+        fft_segmento = fft.fft(segmento) #calcolo fft del segmento
+        freq_segmento = fft.fftfreq(len(segmento), d=1/rate)  #calcolo frequenze 
+        ampiezza_segmento = np.abs(fft_segmento) / len(segmento) #calcolo ampiezze
         plot_fft(freq_segmento, ampiezza_segmento, i+1)
         
 def calcolo_dft_manuale(segmenti):
@@ -98,21 +99,19 @@ def main():
     # data è una matrice di 2 colonne (perchè il file è stereo) e tante 
     # righe quante sono i campioni
     # data.shape() restituisce il numero di righe e colonne della matrice
-    
-    rate, data = sp.io.wavfile.read("halleluja.wav")
-    data = data[:,0] # prendo solo una colonna
-    
+    rate, data = wav.read("halleluja.wav")
+    data = data.mean(axis=1) # converte il segnale stereo in mono
     # sd.play(data, rate)  # riproduce il file audio
     # sd.wait() # attende la fine esecuzione del file audio
     
-    sezioni = divisione_audio(rate, data, 1)
+    sezioni = divisione_audio(rate, data, 30)
 
     # riproduzione dei segmenti di M secondi
     # for i in range(len(sezioni)):
     #     sd.play(sezioni[i], rate)
     #     sd.wait()   
 
-    plot_waveform(rate, data)
+    #plot_waveform(rate, data)
 
     calcolo_dft_manuale(sezioni)
 

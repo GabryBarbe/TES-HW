@@ -20,7 +20,6 @@ def plot_waveform(rate, data):
     plt.ylabel("Ampiezza")
     plt.grid(True)
     plt.show()  
-    
 
 def divisione_audio(rate, data, M):
     """
@@ -64,12 +63,11 @@ def plot_fft(freq, ampiezza, num_segmento):
     plt.grid(True)
     plt.show()
 
-def calcolo_fft_libreria(rate, segmenti):
+def calcolo_fft_libreria(segmenti, rate):
     """
     Calcolo della FFT del segnale audio con la libreria scipy
 
     Args:
-        rate: frequenza di campionamento del segnale audio
         segmenti (list): lista di sezioni di M secondi
     """
     for i,segmento in enumerate(segmenti):
@@ -78,6 +76,23 @@ def calcolo_fft_libreria(rate, segmenti):
         ampiezza_segmento = np.abs(fft_segmento) / len(segmento) #calcolo ampiezze
         plot_fft(freq_segmento, ampiezza_segmento, i+1)
         
+def calcolo_dft_manuale(segmenti):
+    """
+    Calcolo della DFT 
+    
+    Args:
+        segmenti (list): lista di sezioni di M secondi
+    """
+    for i,segmento in enumerate(segmenti):
+        N = len(segmento)
+        X = np.zeros(N, dtype=complex)
+        for k in range(N):
+            for n in range(N):
+                X[k] += segmento[n] * np.exp(-2j*np.pi*k*n/N)
+        freq = np.linspace(0, 0.5, N//2)
+        ampiezza = np.abs(X[:N//2])
+        plot_fft(freq, ampiezza, i+1)
+
 
 def main():
     # rate è la frequenza di campionamento
@@ -98,7 +113,7 @@ def main():
 
     #plot_waveform(rate, data)
 
-    calcolo_fft_libreria(rate, sezioni)
+    calcolo_dft_manuale(sezioni)
 
     return 0
 

@@ -63,7 +63,7 @@ def plot_fft(freq, ampiezza, num_segmento):
     plt.grid(True)
     plt.show()
 
-def calcolo_fft_libreria(segmenti):
+def calcolo_fft_libreria(segmenti, rate):
     """
     Calcolo della FFT del segnale audio con la libreria scipy
 

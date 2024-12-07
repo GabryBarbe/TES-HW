@@ -3,6 +3,7 @@ import scipy.io.wavfile as wav
 import sounddevice as sd
 import numpy as np
 import matplotlib.pyplot as plt
+from time import time
 
 def plot_waveform(rate, data):
     """
@@ -79,7 +80,7 @@ def calcolo_fft_libreria(segmenti, rate):
         ampiezza_segmento = np.abs(fft_segmento) / len(segmento) #calcolo ampiezze
         plot_fft(freq_segmento, ampiezza_segmento, i+1)
         
-def calcolo_dft_manuale(segmenti):
+def calcolo_dft_manuale(segmenti, rate):
     """
     Calcolo della DFT 
     
@@ -89,17 +90,22 @@ def calcolo_dft_manuale(segmenti):
     for i,segmento in enumerate(segmenti):
         N = len(segmento)
         X = np.zeros(N, dtype=complex)
+        start = time()
         for k in range(N):
             for n in range(N):
                 X[k] += segmento[n] * np.exp(-2j*np.pi*k*n/N)
-        freq = np.linspace(0, 0.5, N//2)
-        ampiezza = np.abs(X[:N//2])
+            #print("Segmento", i+1, "completato al", (k/N)*100, "% , k =", k, "X[k] =", np.abs(X[k])/N)
+        stop = time()
+        print("Tempo di esecuzione:", stop-start)
+        freq = np.arange(-N//2, N//2, 1) * rate/N
+        ampiezza = fft.fftshift(np.abs(X)/N)
         plot_fft(freq, ampiezza, i+1)
+
 
 
 def main():
     FILENAME = "halleluja.wav" # nome del file audio
-    M = 5 # durata in secondi di ogni sezione
+    M = 1 # durata in secondi di ogni sezione
 
     # rate è la frequenza di campionamento
     # data è una matrice di 2 colonne (perchè il file è stereo) e tante 
@@ -121,9 +127,9 @@ def main():
 
     plot_waveform(rate, data)
 
-    calcolo_fft_libreria(sezioni, rate)
+    #calcolo_fft_libreria(sezioni, rate)
 
-    #calcolo_dft_manuale(sezioni)
+    calcolo_dft_manuale(sezioni, rate)
 
     return 0
 

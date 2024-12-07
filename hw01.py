@@ -76,7 +76,7 @@ def calcolo_fft_libreria(segmenti, rate):
         ampiezza_segmento = np.abs(fft_segmento) / len(segmento) #calcolo ampiezze
         plot_fft(freq_segmento / 1000, ampiezza_segmento, i+1)
         
-def calcolo_dft_manuale(segmenti):
+def calcolo_dft_manuale(segmenti, rate):
     """
     Calcolo della DFT 
     
@@ -89,8 +89,9 @@ def calcolo_dft_manuale(segmenti):
         for k in range(N):
             for n in range(N):
                 X[k] += segmento[n] * np.exp(-2j*np.pi*k*n/N)
-        freq = np.linspace(0, 0.5, N//2)
-        ampiezza = np.abs(X[:N//2])
+            print("Segmento", i+1, "completato al", (k/N)*100, "% , k =", k)
+        freq = np.arange(-N//2, N//2-1, 1) * rate/N
+        ampiezza = fft.fftshift(np.abs(X[:N//2]))
         plot_fft(freq, ampiezza, i+1)
 
 
@@ -104,7 +105,7 @@ def main():
     # sd.play(data, rate)  # riproduce il file audio
     # sd.wait() # attende la fine esecuzione del file audio
     
-    sezioni = divisione_audio(rate, data, 30)
+    sezioni = divisione_audio(rate, data, 1)
 
     # riproduzione dei segmenti di M secondi
     # for i in range(len(sezioni)):
@@ -113,7 +114,7 @@ def main():
 
     #plot_waveform(rate, data)
 
-    calcolo_fft_libreria(sezioni, rate)
+    calcolo_dft_manuale(sezioni, rate)
 
     return 0
 

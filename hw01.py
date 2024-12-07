@@ -3,6 +3,7 @@ import scipy.io.wavfile as wav
 import sounddevice as sd
 import numpy as np
 import matplotlib.pyplot as plt
+from time import time
 
 def plot_waveform(rate, data):
     """
@@ -74,6 +75,8 @@ def calcolo_fft_libreria(segmenti, rate):
         fft_segmento = fft.fft(segmento) #calcolo fft del segmento
         freq_segmento = fft.fftfreq(len(segmento), d=1/rate)  #calcolo frequenze 
         ampiezza_segmento = np.abs(fft_segmento) / len(segmento) #calcolo ampiezze
+        #print(ampiezza_segmento[len(ampiezza_segmento)//2:len(ampiezza_segmento)//2+100])
+        #print(ampiezza_segmento[0:100])
         plot_fft(freq_segmento / 1000, ampiezza_segmento, i+1)
         
 def calcolo_dft_manuale(segmenti, rate):
@@ -86,12 +89,15 @@ def calcolo_dft_manuale(segmenti, rate):
     for i,segmento in enumerate(segmenti):
         N = len(segmento)
         X = np.zeros(N, dtype=complex)
+        start = time()
         for k in range(N):
             for n in range(N):
                 X[k] += segmento[n] * np.exp(-2j*np.pi*k*n/N)
-            print("Segmento", i+1, "completato al", (k/N)*100, "% , k =", k)
-        freq = np.arange(-N//2, N//2-1, 1) * rate/N
-        ampiezza = fft.fftshift(np.abs(X[:N//2]))
+            #print("Segmento", i+1, "completato al", (k/N)*100, "% , k =", k, "X[k] =", np.abs(X[k])/N)
+        stop = time()
+        print("Tempo di esecuzione:", stop-start)
+        freq = np.arange(-N//2, N//2, 1) * rate/N
+        ampiezza = fft.fftshift(np.abs(X)/N)
         plot_fft(freq, ampiezza, i+1)
 
 

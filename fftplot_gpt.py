@@ -22,16 +22,16 @@ def plot_audio_spectrum(file_path):
     # Calcola la risoluzione in frequenza
     delta_f = sample_rate / n
     #print(f"Risoluzione in frequenza (Delta f): {delta_f} Hz")
-    print((audio_data)[:10])
+    print(frequencies[n//2-5:n//2+5], spectrum[n//2-5:n//2+5])
     # Disegna il grafico dello spettro
-    # plt.figure(figsize=(12, 6))
-    # plt.plot(frequencies, spectrum, color='blue', lw=1)
-    # plt.title("Spettro del segnale audio")
-    # plt.xlabel("Frequenza (Hz)")
-    # plt.ylabel("Ampiezza")
-    # plt.grid(True)
-    # plt.tight_layout()
-    # plt.show()
+    plt.figure(figsize=(12, 6))
+    plt.plot(frequencies[n//2-5:n//2+5], spectrum[n//2-5:n//2+5], color='blue', lw=1)
+    plt.title("Spettro del segnale audio")
+    plt.xlabel("Frequenza (Hz)")
+    plt.ylabel("Ampiezza")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
 
 # Percorso al file audio
 file_path = "halleluja.wav"  # Sostituisci con il percorso del tuo file audio

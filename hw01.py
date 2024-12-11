@@ -14,13 +14,33 @@ def plot_waveform(rate, data):
         data: contenuto del segnale audio
     """
     # La durata è il numero di righe (campioni) diviso la frequenza di campionamento
-    durata = data.shape[0] / rate
+    durata = len(data)/ rate
     
     plt.plot(np.linspace(0, durata, data.shape[0]), data)
-    plt.xlabel("Tempo")
-    plt.ylabel("Ampiezza")
+    plt.xlabel("Tempo [s]")
+    plt.ylabel("Ampiezza [dB]")
+    plt.title("Waveform del segnale audio")
     plt.grid(True)
     plt.show()  
+
+def plot_fft(freq, ampiezza, num_segmento):
+    """
+    Plot della FFT del segnale audio
+
+    Args:
+        freq: frequenze della FFT
+        ampiezza: ampiezze della FFT
+        num_segmento (integer): numero del segmento
+    """
+    
+    plt.plot(freq, ampiezza)
+    plt.xlabel("Frequenza [kHz]")
+    plt.ylabel("Ampiezza [dB]")
+    plt.suptitle("Segmento " + str(num_segmento))
+    plt.title("Spettro di energia")
+    plt.grid(True)
+    plt.show()
+
 
 def divisione_audio(rate, data, M):
     """
@@ -34,6 +54,7 @@ def divisione_audio(rate, data, M):
     Returns:
         sezioni (list): lista di sezioni di M secondi
     """
+
     campioni_per_sezione = rate*M # numero di campioni per sezione
     num_sezioni = (data.shape[0]//campioni_per_sezione) + 1# numero di sezioni
     
@@ -45,24 +66,6 @@ def divisione_audio(rate, data, M):
 
     return sezioni
 
-def plot_fft(freq, ampiezza, num_segmento):
-    """
-    Plot della FFT del segnale audio
-
-    Args:
-        freq: frequenze della FFT
-        ampiezza: ampiezze della FFT
-        num_segmento (integer): numero del segmento
-    """
-    # seleziono solo le frequenze e ampiezze positive
-    # freq_pos = [0.5 + f for f in freq]
-    # ampiezza_pos = np.concatenate((ampiezza[len(ampiezza)//2 : ],ampiezza[0 : len(ampiezza)//2]))
-    plt.plot(freq, ampiezza)
-    plt.xlabel("Frequenza")
-    plt.ylabel("Ampiezza")
-    plt.suptitle("Segmento " + str(num_segmento))
-    plt.grid(True)
-    plt.show()
 
 def calcolo_fft_libreria(segmenti, rate):
     """
@@ -73,7 +76,7 @@ def calcolo_fft_libreria(segmenti, rate):
     """
     for i,segmento in enumerate(segmenti):
         fft_segmento = fft.fft(segmento) #calcolo fft del segmento
-        freq_segmento = fft.fftfreq(len(segmento), d=1/rate)  #calcolo frequenze 
+        freq_segmento = fft.fftfreq(len(segmento), d=1/rate) / 1000  #calcolo frequenze 
         ampiezza_segmento = np.abs(fft_segmento) / len(segmento) #calcolo ampiezze
         #print(ampiezza_segmento[len(ampiezza_segmento)//2:len(ampiezza_segmento)//2+100])
         #print(ampiezza_segmento[0:100])
@@ -101,24 +104,32 @@ def calcolo_dft_manuale(segmenti, rate):
         plot_fft(freq, ampiezza, i+1)
 
 
+
 def main():
+    FILENAME = "halleluja.wav" # nome del file audio
+    M = 1 # durata in secondi di ogni sezione
+
     # rate è la frequenza di campionamento
     # data è una matrice di 2 colonne (perchè il file è stereo) e tante 
     # righe quante sono i campioni
     # data.shape() restituisce il numero di righe e colonne della matrice
-    rate, data = wav.read("halleluja.wav")
-    data = data.mean(axis=1) # converte il segnale stereo in mono
+    rate, data = wav.read(FILENAME)
+    if data.shape[1] == 2:
+        data = data.mean(axis=1) # converte il segnale stereo in mono
+
     # sd.play(data, rate)  # riproduce il file audio
     # sd.wait() # attende la fine esecuzione del file audio
     
-    sezioni = divisione_audio(rate, data, 1)
+    sezioni = divisione_audio(rate, data, M)
 
-    # riproduzione dei segmenti di M secondi
+    #riproduzione dei segmenti di M secondi
     # for i in range(len(sezioni)):
     #     sd.play(sezioni[i], rate)
     #     sd.wait()   
 
-    #plot_waveform(rate, data)
+    plot_waveform(rate, data)
+
+    #calcolo_fft_libreria(sezioni, rate)
 
     calcolo_dft_manuale(sezioni, rate)
 

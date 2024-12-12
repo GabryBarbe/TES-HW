@@ -75,7 +75,10 @@ def calcolo_fft_libreria(segmenti, rate):
         segmenti (list): lista di sezioni di M secondi
     """
     for i,segmento in enumerate(segmenti):
+        start = time()
         fft_segmento = fft.fft(segmento) #calcolo fft del segmento
+        stop = time()
+        print("Tempo di esecuzione:", stop-start)
         freq_segmento = fft.fftfreq(len(segmento), d=1/rate) / 1000  #calcolo frequenze 
         ampiezza_segmento = np.abs(fft_segmento) / len(segmento) #calcolo ampiezze
         plot_fft(freq_segmento, ampiezza_segmento, i+1)
@@ -104,7 +107,7 @@ def calcolo_dft_manuale(segmenti, rate):
 
 
 def main():
-    FILENAME = "halleluja.wav" # nome del file audio
+    FILENAME = "bohemian_rhapsody.wav" # nome del file audio
     M = 1 # durata in secondi di ogni sezione
 
     # rate è la frequenza di campionamento
@@ -112,6 +115,7 @@ def main():
     # righe quante sono i campioni
     # data.shape() restituisce il numero di righe e colonne della matrice
     rate, data = wav.read(FILENAME)
+    
     if data.shape[1] == 2:
         data = data.mean(axis=1) # converte il segnale stereo in mono
 
@@ -128,8 +132,9 @@ def main():
     plot_waveform(rate, data)
 
     #calcolo_fft_libreria(sezioni, rate)
+    
+    calcolo_fft_libreria(sezioni, rate)
 
-    calcolo_dft_manuale(sezioni, rate)
 
     return 0
 
